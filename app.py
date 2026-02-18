@@ -17,6 +17,28 @@ CORS(app, supports_credentials=True, origins=[
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
 
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get('Origin')
+    allowed_origins = [
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "https://sumitbehera720.github.io"
+    ]
+    if origin in allowed_origins:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    return response
+
+@app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+@app.route('/<path:path>', methods=['OPTIONS'])
+def handle_options(path):
+    response = jsonify({})
+    response.status_code = 200
+    return response
+
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
