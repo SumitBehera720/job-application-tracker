@@ -10,7 +10,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "jobtracker_secret_2024")
 CORS(app, supports_credentials=True, origins=[
     "http://127.0.0.1:5500",
     "http://localhost:5500",
-    "https://sumitbehera.github.io"  # replace with your actual GitHub Pages URL
+    "https://sumitbehera720.github.io"
 ])
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
@@ -145,4 +145,5 @@ def delete_job(job_id):
 
 if __name__ == '__main__':
     init_db()
+
     app.run(debug=True)
