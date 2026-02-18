@@ -5,7 +5,9 @@ import os
 import hashlib
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "jobtracker_secret_2024")
+app.secret_key = os.environ.get("SECRET_KEY", "jobtracker@sumit2024secretkey!")
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 
 CORS(app, supports_credentials=True, origins=[
     "http://127.0.0.1:5500",
@@ -14,7 +16,7 @@ CORS(app, supports_credentials=True, origins=[
 ])
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
-# --- Initialize Database ---
+
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -43,7 +45,6 @@ def init_db():
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# --- Auth Routes ---
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
@@ -90,7 +91,6 @@ def me():
         return jsonify({"username": session['username'], "logged_in": True})
     return jsonify({"logged_in": False})
 
-# --- Job Routes ---
 @app.route('/jobs', methods=['GET'])
 def get_jobs():
     if 'user_id' not in session:
@@ -145,5 +145,4 @@ def delete_job(job_id):
 
 if __name__ == '__main__':
     init_db()
-
     app.run(debug=True)
