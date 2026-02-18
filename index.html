@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobTracker — Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">💼</span>
+            <span>JobTracker</span>
+        </div>
+        <div class="nav-right">
+            <span class="welcome-text">👋 Hello, <strong id="usernameDisplay">User</strong></span>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Switch to Light Mode">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- Stats Section -->
+    <div class="stats-container">
+        <div class="stat-card total">
+            <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
+            <div class="stat-info">
+                <h3 id="total">0</h3>
+                <p>Total Applied</p>
+            </div>
+        </div>
+        <div class="stat-card interview">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-info">
+                <h3 id="interviews">0</h3>
+                <p>Interviews</p>
+            </div>
+        </div>
+        <div class="stat-card offer">
+            <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+            <div class="stat-info">
+                <h3 id="offers">0</h3>
+                <p>Offers</p>
+            </div>
+        </div>
+        <div class="stat-card rejected">
+            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-info">
+                <h3 id="rejected">0</h3>
+                <p>Rejected</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Left: Form + Table -->
+        <div class="left-panel">
+
+            <!-- Add Job Form -->
+            <div class="form-container">
+                <h2><i class="fas fa-plus-circle"></i> Add New Application</h2>
+                <div class="form-grid">
+                    <input type="text" id="company" placeholder="Company Name" />
+                    <input type="text" id="role" placeholder="Job Role" />
+                    <input type="date" id="date_applied" />
+                    <select id="status">
+                        <option value="Applied">Applied</option>
+                        <option value="Interview">Interview</option>
+                        <option value="Offer">Offer</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <textarea id="notes" placeholder="Notes (optional)" rows="2"></textarea>
+                    <button onclick="addJob()"><i class="fas fa-plus"></i> Add Application</button>
+                </div>
+            </div>
+
+            <!-- Filter & Search -->
+            <div class="filter-container">
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Search by company or role..." oninput="filterJobs()" />
+                </div>
+                <select id="filterStatus" onchange="filterJobs()">
+                    <option value="All">All Status</option>
+                    <option value="Applied">Applied</option>
+                    <option value="Interview">Interview</option>
+                    <option value="Offer">Offer</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+
+            <!-- Jobs Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Role</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobsTable"></tbody>
+                </table>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <div class="empty-illustration">
+                        <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                            <circle cx="60" cy="60" r="58" stroke="currentColor" stroke-width="2" stroke-dasharray="8 4" opacity="0.3"/>
+                            <rect x="30" y="40" width="60" height="45" rx="8" fill="currentColor" opacity="0.1" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+                            <rect x="38" y="52" width="30" height="4" rx="2" fill="currentColor" opacity="0.4"/>
+                            <rect x="38" y="62" width="44" height="4" rx="2" fill="currentColor" opacity="0.3"/>
+                            <rect x="38" y="72" width="22" height="4" rx="2" fill="currentColor" opacity="0.2"/>
+                            <circle cx="78" cy="38" r="14" fill="#7c6bff" opacity="0.9"/>
+                            <text x="78" y="43" text-anchor="middle" font-size="14">✨</text>
+                        </svg>
+                    </div>
+                    <h3>No applications yet!</h3>
+                    <p>Start tracking your job hunt journey above.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Chart -->
+        <div class="right-panel">
+            <div class="chart-container">
+                <h2><i class="fas fa-chart-pie"></i> Application Stats</h2>
+                <div class="chart-wrap">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="chart-legend" id="chartLegend"></div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="tips-card">
+                <h3>💡 Job Hunt Tips</h3>
+                <ul>
+                    <li>Follow up after 1 week of applying</li>
+                    <li>Customize resume for each role</li>
+                    <li>Research company before interviews</li>
+                    <li>Send thank-you emails post-interview</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-edit"></i> Update Application</h2>
+            <input type="hidden" id="editId" />
+            <div class="form-group">
+                <label>Status</label>
+                <select id="editStatus">
+                    <option value="Applied">Applied</option>
+                    <option value="Interview">Interview</option>
+                    <option value="Offer">Offer</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="editNotes" placeholder="Update notes..." rows="3"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="updateJob()"><i class="fas fa-save"></i> Save</button>
+                <button class="cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+<!-- Footer -->
+<div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem; font-family: 'Syne', sans-serif; border-top: 1px solid var(--border); margin-top: 10px;">
+    Designed & Developed by <strong style="background: linear-gradient(135deg, #7c6bff, #ff6b9d); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Sumit Behera</strong>
+</div>
+    <script src="script.js"></script>
+</body>
+</html>
