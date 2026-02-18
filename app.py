@@ -165,6 +165,8 @@ def delete_job(job_id):
     conn.close()
     return jsonify({"message": "Job deleted successfully!"})
 
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
+
