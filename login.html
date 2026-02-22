@@ -285,13 +285,12 @@
 
     // Check if already logged in
     window.onload = async () => {
-        try {
-            const res = await fetch(`${API}/me`, { credentials: 'include' });
-            const data = await res.json();
-            if (data.logged_in) window.location.href = "index.html";
-        } catch (err) {
-            console.log("Session check failed, staying on login page.");
-        }
+    try {
+        const token = localStorage.getItem("username");
+        if (token) window.location.href = "index.html";
+    } catch (err) {
+        console.log("staying on login page");
+    }
     };
 
     function switchTab(tab, btnEl) {
@@ -339,6 +338,7 @@
 
             const data = await res.json();
             if (res.ok) {
+                localStorage.setItem("username", data.username);
                 window.location.href = "index.html";
             } else {
                 errorEl.textContent = "❌ " + data.error;
@@ -398,5 +398,4 @@
     });
 </script>
 </body>
-
 </html>
