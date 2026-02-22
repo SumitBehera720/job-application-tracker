@@ -338,7 +338,7 @@
 
         const data = await res.json();
         if (res.ok) {
-            localStorage.setItem("username", data.username);
+            localStorage.setItem("username", data.username || username);
             window.location.href = "index.html";
         } else {
             errorEl.textContent = "❌ " + data.error;
@@ -399,4 +399,5 @@
 </script>
 </body>
 </html>
+
 
