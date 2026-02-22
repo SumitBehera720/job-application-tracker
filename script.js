@@ -4,20 +4,26 @@ let chartInstance = null;
 
 // ===== Check Login =====
 window.onload = async () => {
-    const res = await fetch(`${API}/me`, { credentials: 'include' });
-    const data = await res.json();
-    if (!data.logged_in) {
+    try {
+        const token = localStorage.getItem("username");
+        if (!token) {
+            window.location.href = "login.html";
+            return;
+        }
+        const res = await fetch(`${API}/me`, { credentials: 'include' });
+        const data = await res.json();
+        if (!data.logged_in) {
+            window.location.href = "login.html";
+            return;
+        }
+        document.getElementById("usernameDisplay").textContent = data.username;
+        const savedTheme = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        updateThemeIcon(savedTheme);
+        loadJobs();
+    } catch (err) {
         window.location.href = "login.html";
-        return;
     }
-    document.getElementById("usernameDisplay").textContent = data.username;
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    updateThemeIcon(savedTheme);
-
-    loadJobs();
 };
 
 // ===== Theme Toggle =====
@@ -43,6 +49,7 @@ function updateThemeIcon(theme) {
 
 // ===== Logout =====
 async function logout() {
+    localStorage.removeItem("username");
     await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
     window.location.href = "login.html";
 }
@@ -275,5 +282,4 @@ function filterJobs() {
 
     renderJobs(filtered);
     updateStats(filtered);
-
 }
