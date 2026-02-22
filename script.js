@@ -4,26 +4,16 @@ let chartInstance = null;
 
 // ===== Check Login =====
 window.onload = async () => {
-    try {
-        const token = localStorage.getItem("username");
-        if (!token) {
-            window.location.href = "login.html";
-            return;
-        }
-        const res = await fetch(`${API}/me`, { credentials: 'include' });
-        const data = await res.json();
-        if (!data.logged_in) {
-            window.location.href = "login.html";
-            return;
-        }
-        document.getElementById("usernameDisplay").textContent = data.username;
-        const savedTheme = localStorage.getItem("theme") || "dark";
-        document.documentElement.setAttribute("data-theme", savedTheme);
-        updateThemeIcon(savedTheme);
-        loadJobs();
-    } catch (err) {
+    const username = localStorage.getItem("username");
+    if (!username) {
         window.location.href = "login.html";
+        return;
     }
+    document.getElementById("usernameDisplay").textContent = username;
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    updateThemeIcon(savedTheme);
+    loadJobs();
 };
 
 // ===== Theme Toggle =====
@@ -66,7 +56,11 @@ function showToast(message, type = "success") {
 async function loadJobs() {
     try {
         const res = await fetch(`${API}/jobs`, { credentials: 'include' });
-        if (res.status === 401) { window.location.href = "login.html"; return; }
+        if (res.status === 401) {
+            localStorage.removeItem("username");
+            window.location.href = "login.html";
+            return;
+        }
         allJobs = await res.json();
         renderJobs(allJobs);
         updateStats(allJobs);
@@ -283,3 +277,4 @@ function filterJobs() {
     renderJobs(filtered);
     updateStats(filtered);
 }
+
