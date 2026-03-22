@@ -3,7 +3,7 @@
 
 A full-stack web application to help job seekers track their job applications, manage interview stages, and visualize their job hunt progress — all in one place.
 
-🌐 **Live Demo (Frontend):** [sumitbehera720.github.io/job-application-tracker/login.html](https://sumitbehera720.github.io/job-application-tracker/login.html)
+🌐 **Live Demo (Frontend):** [sumitbehera720.github.io/job-application-tracker/](https://sumitbehera720.github.io/job-application-tracker/)
 
 ⚙️ **Backend API:** [job-application-tracker-5kjd.onrender.com](https://job-application-tracker-5kjd.onrender.com)
 
